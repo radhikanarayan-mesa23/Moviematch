@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "app-web",
+      "name": "tonight-web",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "app", "run", "web", "--", "--port", "8082"],
-      "port": 8082
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
     }
   ]
 }

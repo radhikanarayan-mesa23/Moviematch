@@ -1,11 +1,26 @@
+# dependencies
 node_modules/
+
+# next.js
+.next/
+out/
+build/
+
+# env
 .env
 .env.local
-*.log
+.env.*.local
+
+# misc
 .DS_Store
-.expo/
-dist/
-ios/
-android/
-.expo-shared/
+*.log
 npm-debug.*
+*.tsbuildinfo
+next-env.d.ts
+
+# vercel
+.vercel
+
+# opennext / cloudflare
+.open-next/
+.wrangler/
