@@ -4,25 +4,22 @@ import type { CandidateTitle, MediaType, SearchBrief } from "@/lib/types";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
-function isV4Token(key: string): boolean {
-  return key.startsWith("eyJ");
-}
-
 function tmdbUrl(path: string, params: Record<string, string | number | boolean | undefined>): string {
   const url = new URL(TMDB_BASE + path);
   for (const [k, v] of Object.entries(params)) {
     if (v === undefined) continue;
     url.searchParams.set(k, String(v));
   }
-  if (hasTmdb && !isV4Token(env.tmdbApiKey)) {
-    url.searchParams.set("api_key", env.tmdbApiKey);
+  // Read access token (Bearer) takes precedence; v3 key goes as a query param.
+  if (!env.tmdbReadAccessToken && env.tmdbApiKeyV3) {
+    url.searchParams.set("api_key", env.tmdbApiKeyV3);
   }
   return url.toString();
 }
 
 function tmdbHeaders(): HeadersInit {
-  if (hasTmdb && isV4Token(env.tmdbApiKey)) {
-    return { Authorization: `Bearer ${env.tmdbApiKey}`, accept: "application/json" };
+  if (env.tmdbReadAccessToken) {
+    return { Authorization: `Bearer ${env.tmdbReadAccessToken}`, accept: "application/json" };
   }
   return { accept: "application/json" };
 }

@@ -38,7 +38,8 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
-TMDB_API_KEY=            # v3 key or v4 read token — auto-detected (v4 starts with "eyJ")
+TMDB_READ_ACCESS_TOKEN=  # v4 read access token — preferred if both are set
+TMDB_API_KEY=             # v3 key — fallback
 
 RAPIDAPI_KEY=
 RAPIDAPI_HOST=ott-details.p.rapidapi.com
