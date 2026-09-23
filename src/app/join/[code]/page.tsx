@@ -29,7 +29,11 @@ export default function JoinPage({ params }: PageProps<"/join/[code]">) {
     }
   }, [code, session, router, identity]);
 
-  const alreadyUsed = !loading && bSubmitted && !identity;
+  // bSubmitted flips true as soon as B's preferences are saved, even if the
+  // pool build then fails — so only treat this as "someone else already
+  // used the invite" once we're done with our own attempt and it didn't
+  // end in an error we should let the user retry from.
+  const alreadyUsed = !loading && !submitting && bSubmitted && !identity && !error;
 
   async function handleSubmit(preferences: Preferences) {
     setSubmitting(true);
@@ -68,21 +72,21 @@ export default function JoinPage({ params }: PageProps<"/join/[code]">) {
     );
   }
 
-  if (alreadyUsed) {
-    return (
-      <main className="flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
-        <h1 className="text-xl font-bold">This invite has already been used</h1>
-        <p className="text-sm text-[var(--text-muted)]">Ask your partner to start a new session.</p>
-      </main>
-    );
-  }
-
   if (submitting) {
     return (
       <main className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-[var(--accent-to)] border-t-transparent" />
         <p className="text-lg font-semibold">Finding tonight&apos;s picks…</p>
         <p className="text-sm text-[var(--text-faint)]">This can take up to a minute.</p>
+      </main>
+    );
+  }
+
+  if (alreadyUsed) {
+    return (
+      <main className="flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
+        <h1 className="text-xl font-bold">This invite has already been used</h1>
+        <p className="text-sm text-[var(--text-muted)]">Ask your partner to start a new session.</p>
       </main>
     );
   }

@@ -19,7 +19,10 @@ export function SwipeDeck({ titles, seed, onSwipe, onDeckEmpty }: SwipeDeckProps
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (ordered.length > 0 && index >= ordered.length) {
+    // By the time this mounts, the parent page has already resolved a real
+    // (possibly empty) titles array — never "not yet loaded" — so an empty
+    // deck should finish the round immediately rather than hang silently.
+    if (index >= ordered.length) {
       onDeckEmpty();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

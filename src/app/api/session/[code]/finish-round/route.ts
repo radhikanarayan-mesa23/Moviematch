@@ -97,6 +97,14 @@ export async function POST(request: Request, ctx: RouteContext<"/api/session/[co
         likedB,
         excludeKeys
       );
+
+      if (pool.length === 0) {
+        // Nothing new survived the refined brief — skip straight to the
+        // final-choice screen rather than leaving round 2 unswipeable.
+        await store.updateSession(session.id, { status: "final_choice" });
+        return NextResponse.json({ result: "final_choice" });
+      }
+
       await store.insertTitlesPool(session.id, 2, pool);
       await store.updateSession(session.id, { status: "swiping", round: 2, brief });
       return NextResponse.json({ result: "round2" });

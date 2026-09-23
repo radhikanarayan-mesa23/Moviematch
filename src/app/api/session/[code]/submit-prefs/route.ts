@@ -45,6 +45,22 @@ export async function POST(request: Request, ctx: RouteContext<"/api/session/[co
     await store.ensureCouple(coupleId);
 
     const { brief, pool } = await buildPoolRound1(participantA.preferences, preferences);
+
+    if (pool.length === 0) {
+      // Nothing survived both preference sets (e.g. a 9+ rating floor
+      // combined with a narrow genre/era/language brief). Don't leave the
+      // session in "swiping" with nothing to swipe — bounce it back so the
+      // client shows a clear, actionable error instead of hanging forever.
+      await store.updateSession(session.id, { status: session.status });
+      return NextResponse.json(
+        {
+          error:
+            "No titles matched both of your preferences tonight — try a lower minimum rating, a broader era, or an extra language, then try again.",
+        },
+        { status: 422 }
+      );
+    }
+
     await store.insertTitlesPool(session.id, 1, pool);
     await store.updateSession(session.id, {
       status: "swiping",
